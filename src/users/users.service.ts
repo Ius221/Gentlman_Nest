@@ -1,8 +1,9 @@
+import { SigninUserDto } from './dtos/signin-user.dto';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, IsNull } from 'typeorm';
 import { User } from './user.entity';
-import { CreateUserDto } from './dtos/create-user.dto';
+import { SignupUserDto } from './dtos/signup-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
@@ -16,17 +17,42 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto) {
-    const user = await this.findByEmail(createUserDto.email);
+  async signupUser(signupUserDto: SignupUserDto) {
+    const user = await this.findByEmail(signupUserDto.email);
     if (user) throw new BadRequestException('Email already exists');
 
-    const createdUser = this.usersRepository.create(createUserDto);
+    const createdUser = this.usersRepository.create(signupUserDto);
     const salt = randomBytes(8).toString('hex');
-    const hash = (await myScrypt(createUserDto.password, salt, 32)) as Buffer;
+    const hash = (await myScrypt(signupUserDto.password, salt, 32)) as Buffer;
 
     createdUser.password = salt + '.' + hash.toString('hex');
 
     return await this.usersRepository.save(createdUser);
+  }
+
+  async signinUser(signinUserDto: SigninUserDto) {
+    const fetchedUser = await this.findByEmail(signinUserDto.email);
+
+    if (!fetchedUser?.password) {
+      throw new BadRequestException('Invalid credentials');
+    }
+
+    const [salt, storedPassword] = fetchedUser.password.split('.');
+
+    const hashedPassword = (await myScrypt(
+      signinUserDto.password,
+      salt,
+      32,
+    )) as Buffer;
+
+    if (storedPassword !== hashedPassword.toString('hex'))
+      throw new BadRequestException('Invalid credentials');
+
+    return fetchedUser;
+  }
+
+  async findById(id: string) {
+    return await this.usersRepository.findOne({ where: { id } });
   }
 
   async findByEmail(email: string) {

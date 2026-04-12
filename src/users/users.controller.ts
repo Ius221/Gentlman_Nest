@@ -1,14 +1,5 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Patch,
-  Delete,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Delete } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { Serialize } from 'src/interceptor/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
@@ -17,11 +8,6 @@ import { UserDto } from './dtos/user.dto';
 @Serialize(UserDto)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @Post('create')
-  public async createUser(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createUser(createUserDto);
-  }
 
   @Get('email/:email')
   public async findByEmail(@Param('email') email: string) {

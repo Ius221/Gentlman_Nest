@@ -12,7 +12,7 @@ import {
 import { Role } from '../user.entity';
 import { Transform } from 'class-transformer';
 
-export class CreateUserDto {
+export class SignupUserDto {
   @IsString()
   @MaxLength(20)
   firstName: string;
