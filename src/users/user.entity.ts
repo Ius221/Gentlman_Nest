@@ -1,14 +1,5 @@
 import {
-  IsDateString,
-  IsEmail,
-  IsEnum,
-  IsPhoneNumber,
-  IsString,
-  IsStrongPassword,
-  IsUrl,
-  MaxLength,
-} from 'class-validator';
-import {
+  Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
@@ -27,36 +18,32 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @IsString()
-  @MaxLength(20)
+  @Column()
   firstName: string;
 
-  @IsString()
-  @MaxLength(20)
+  @Column()
   lastName: string;
 
-  @IsEmail()
+  @Column()
   email: string;
 
-  @IsPhoneNumber()
-  phoneNumber: number;
+  @Column()
+  phoneNumber: string;
 
-  @IsStrongPassword(
-    {
-      minLength: 6,
-      minSymbols: 0,
-    },
-    { message: 'Password must contain 1 number, 1 small-case, 1 capital-case' },
-  )
+  @Column()
   password: string;
 
-  @IsDateString()
+  @Column()
   dateOfBirth: string;
 
-  @IsUrl()
+  @Column()
   url: string;
 
-  @IsEnum(Role)
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
   role: Role;
 
   @CreateDateColumn()
