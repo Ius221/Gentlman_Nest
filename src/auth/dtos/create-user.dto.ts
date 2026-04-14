@@ -1,3 +1,4 @@
+import { Role } from '../../users/user.entity';
 import {
   IsDateString,
   IsEmail,
@@ -9,10 +10,9 @@ import {
   IsUrl,
   MaxLength,
 } from 'class-validator';
-import { Role } from '../user.entity';
 import { Transform } from 'class-transformer';
 
-export class SignupUserDto {
+export class CreateUserDto {
   @IsString()
   @MaxLength(20)
   firstName: string;
