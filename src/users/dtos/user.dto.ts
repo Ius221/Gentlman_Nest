@@ -3,6 +3,9 @@ import { Role } from '../user.entity';
 
 export class UserDto {
   @Expose()
+  id: string;
+
+  @Expose()
   firstName: string;
 
   @Expose()
